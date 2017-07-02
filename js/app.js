@@ -184,8 +184,8 @@ $.ajax({
     
     success: function (response) {
         
-        placeLoc.title = response.response.venue.title;
-        placeLoc.description = response.response.venue.placeLoc.description ? response.response.venue.placeLoc.description: " ";
+        placeLoc.title = response.response.title;
+        placeLoc.description = response.response.placeLoc.description ? response.response.placeLoc.description: " ";
         
         console.log(placeLoc.title);
         console.log(placeLoc.description);
