@@ -72,38 +72,7 @@ var InitMap = function () {
         self.filteredlist = ko.observableArray([]);
         self.locations = ko.observableArray([]);
         
-        /*//Foursquare API
-        function FoursquareId(info) {
-        var venue = info.foursquareid;
-        var fourSquareApi = 'https://api.foursquare.com/v2/venues/search?ll=' + this.lat + ',' + this.lng +
-        '&client_id=K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC&client_secret=3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO=20170619&query=' + this.title;
-        
-        var result = info.response.venue;
-        
-        $.ajax({
-        url: foursquareApi,
-        dataType: "json",
-        success: function (resp) {
-        var venue = resp.response.venue.title;
-        var description = resp.response.venue.locations.description ? resp.response.venue.locations.description: " ";
-        
-        var infowindow = new google.maps.InfoWindow();
-        
-        infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
-        '<h4>' + placeLoc.description() + '</h4>');
-        infowindow.open(map, marker);
-        console.log(resp);
-        }
-        }).fail(function (e) {
-        self.infowindow.setContent('<div><h4>Foursquare could not be loaded.</h4></div>');
-        self.infowindow.open(map, marker);
-        });
-        this.marker = new google.maps.Marker({
-        position: new google.maps.LatLng(data.lat, data. long),
-        map: map,
-        title: data.name
-        });
-        }*/
+    
         
         //create marker for each location and lsit view
         var placeLoc = function (data) {
@@ -138,18 +107,20 @@ var InitMap = function () {
                 marker.addListener('click', function () {
                     infoWindow.marker = marker;
                     this.setAnimation(google.maps.Animation.BOUNCE);
-                    /* added setTimeOut */ setTimeout(function () {
+                    /* added setTimeOut */
+                      setTimeout(function () {
                         marker.setAnimation(null);
                     },
                     700);
                     
                     infoWindow.open(map, marker);
-                    /*added ti close infow*/ infoWindow.addListener('closeclick', function () {
+                    /*added ti close infow*/ 
+                     infoWindow.addListener('closeclick', function () {
                         infowindow.marker = null;
                     });
                     
-                    infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
-                    '<h4>' + placeLoc.description() + '</h4>');
+                   // infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
+                  //  '<h4>' + placeLoc.description() + '</h4>');
                     
                     // infoWindow.setContent(content);
                 });
@@ -164,14 +135,16 @@ var InitMap = function () {
             if (! search) {
                 self.filteredlist().forEach(function (placeLoc) {
                     placeLoc.showlist(true);
-                    /* added setVisible */ placeLoc.marker.setVisible(true);
+                    /* added setVisible */ 
+                    placeLoc.marker.setVisible(true);
                 });
             } else {
                 self.filteredlist().forEach(function (placeLoc) {
                     
                     if (placeLoc.title().toLowerCase().indexOf(search) >= 0) {
                         placeLoc.showlist(true);
-                        /* added setVisible */ placeLoc.marker.setVisible(true);
+                        /* added setVisible */ 
+                        placeLoc.marker.setVisible(true);
                         return true;
                     } else {
                         placeLoc.showlist(false);
