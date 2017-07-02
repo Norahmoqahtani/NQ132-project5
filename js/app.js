@@ -126,8 +126,7 @@ var InitMap = function () {
                 });
             }
         });
-        
-        
+              
         //filter/search locations
         
         self.locationsArray = ko.computed(function () {
