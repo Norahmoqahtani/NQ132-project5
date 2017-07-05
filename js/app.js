@@ -71,9 +71,7 @@ var InitMap = function () {
         self.searchList = ko.observable('');
         self.filteredlist = ko.observableArray([]);
         self.locations = ko.observableArray([]);
-        
-    
-        
+                
         //create marker for each location and lsit view
         var placeLoc = function (data) {
             var self = this;
@@ -85,6 +83,7 @@ var InitMap = function () {
         locations.forEach(function (position) {
             self.filteredlist.push(new placeLoc(position));
         });
+        
         // to knockout
         //Source: http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
         
@@ -108,25 +107,25 @@ var InitMap = function () {
                     infoWindow.marker = marker;
                     this.setAnimation(google.maps.Animation.BOUNCE);
                     /* added setTimeOut */
-                      setTimeout(function () {
+                    setTimeout(function () {
                         marker.setAnimation(null);
                     },
                     700);
                     
                     infoWindow.open(map, marker);
-                    /*added ti close infow*/ 
-                     infoWindow.addListener('closeclick', function () {
+                    /*added to close infow*/
+                    infoWindow.addListener('closeclick', function () {
                         infowindow.marker = null;
                     });
                     
-                   // infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
-                  //  '<h4>' + placeLoc.description() + '</h4>');
+                    // infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
+                    //  '<h4>' + placeLoc.description() + '</h4>');
                     
                     // infoWindow.setContent(content);
                 });
             }
         });
-              
+        
         //filter/search locations
         
         self.locationsArray = ko.computed(function () {
@@ -134,7 +133,7 @@ var InitMap = function () {
             if (! search) {
                 self.filteredlist().forEach(function (placeLoc) {
                     placeLoc.showlist(true);
-                    /* added setVisible */ 
+                    /* added setVisible */
                     placeLoc.marker.setVisible(true);
                 });
             } else {
@@ -142,12 +141,13 @@ var InitMap = function () {
                     
                     if (placeLoc.title().toLowerCase().indexOf(search) >= 0) {
                         placeLoc.showlist(true);
-                        /* added setVisible */ 
+                        /* added setVisible */
                         placeLoc.marker.setVisible(true);
                         return true;
                     } else {
                         placeLoc.showlist(false);
-                        /* added setMap */ placeLoc.marker.setVisible(false);
+                        /* added setMap */ 
+                        placeLoc.marker.setVisible(false);
                         return false;
                     }
                     // return self.filteredlist();
@@ -169,41 +169,45 @@ var InitMap = function () {
 
 
 //FourSquare API
-var fourSquareApiUrl = "https://api.foursquare.com/v2/venues/search?ll="
-"&client_id=K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC&client_secret=3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO=20170619&query=";
-var foursquareId = setTimeout(function () {
-    alert("Foursquare could not be loaded.");
-},
-1500);
-
+var fourSquareApiUrl = "https://api.foursquare.com/v2/venues/search"
+var client_id = 'K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC',
+client_secret = '3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO'
 
 $.ajax({
-    url: fourSquareApiUrl,
-    dataType: "json",
-    async: true,
-    
+url: fourSquareApiUrl,
+dataType: "json",
+async: true,
+data:   {
+ll: '24.774265, 46.738586',
+client_id: client_id,
+client_secret: client_secret,
+v: '20170619'
+},
+
     success: function (response) {
-        
-        placeLoc.title = response.response.title;
-        placeLoc.description = response.response.placeLoc.description ? response.response.placeLoc.description: " ";
-        
-        console.log(placeLoc.title);
-        console.log(placeLoc.description);
-        
-        var infowindow = new google.maps.InfoWindow();
-        
-        infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
-        '<h4>' + placeLoc.description() + '</h4>');
+                        
+        var title = response.response.title;
+        var description = response.response.description ? response.response.description: " ";
+                
+        //click marker to show infowindow 
+        infowindow.marker = marker;
+        infowindow.setContent('<div>' + locations.title + '</div><div>' + locations.description + '</div>');
         infowindow.open(map, marker);
-        
-        clearTimeout(foursquareId);
+                
     }
+}).fail(function (e) {
+    infowindow.setContent('Foursquare data is unavailable. Please try again later.');
+    self.showMessage(true);
 });
+
+
+
 //Google Map Error
 function googleError() {
     window.alert("I'm sorry there has been an error with Google Maps.");
 }
 
+//dropdown list
 function myFunction() {
     document.getElementById("myDropdown").classList.toggle("showlist");
 }
@@ -222,3 +226,4 @@ function filterFunction() {
         }
     }
 }
+
