@@ -71,7 +71,7 @@ var InitMap = function () {
         self.searchList = ko.observable('');
         self.filteredlist = ko.observableArray([]);
         self.locations = ko.observableArray([]);
-                
+        
         //create marker for each location and lsit view
         var placeLoc = function (data) {
             var self = this;
@@ -94,8 +94,6 @@ var InitMap = function () {
                 position: placeLoc.position(),
                 animation: google.maps.Animation.DROP
             });
-            
-            
             
             //create infowindow
             placeLoc.marker = marker;
@@ -146,7 +144,7 @@ var InitMap = function () {
                         return true;
                     } else {
                         placeLoc.showlist(false);
-                        /* added setMap */ 
+                        /* added setMap */
                         placeLoc.marker.setVisible(false);
                         return false;
                     }
@@ -155,7 +153,6 @@ var InitMap = function () {
                 self);
             }
         });
-        
         
         //click the list-view to show the location
         this.openInfo = function (placeLoc) {
@@ -169,38 +166,49 @@ var InitMap = function () {
 
 
 //FourSquare API
+/*  */
 var fourSquareApiUrl = "https://api.foursquare.com/v2/venues/search"
 var client_id = 'K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC',
 client_secret = '3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO'
 
 $.ajax({
-url: fourSquareApiUrl,
-dataType: "json",
-async: true,
-data:   {
-ll: '24.774265, 46.738586',
-client_id: client_id,
-client_secret: client_secret,
-v: '20170619'
-},
-
+    url: fourSquareApiUrl,
+    dataType: "json",
+    async: true,
+    data: {
+        ll: '24.774265, 46.738586',
+        client_id: client_id,
+        client_secret: client_secret,
+        v: '20170619'
+    },
+    
     success: function (response) {
-                        
+        
         var title = response.response.title;
         var description = response.response.description ? response.response.description: " ";
+        
+        //click marker to show infowindow
+        var info = new google.maps.InfoWindow();
+        for (i = 0; i < locations.length; i++) {
+            
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: title
+            });
+            console.log(response.response);
+            
+            google.maps.event.addListener(marker, 'click', function (placeLoc) {
                 
-        //click marker to show infowindow 
-        infowindow.marker = marker;
-        infowindow.setContent('<div>' + locations.title + '</div><div>' + locations.description + '</div>');
-        infowindow.open(map, marker);
-                
+                infowindow.setContent('<div>' + placeLoc.title + '</div><div>' + placeLoc.description + '</div>');
+                infowindow.open(map, marker);
+            });
+        }
     }
 }).fail(function (e) {
     infowindow.setContent('Foursquare data is unavailable. Please try again later.');
     self.showMessage(true);
 });
-
-
 
 //Google Map Error
 function googleError() {
@@ -226,4 +234,3 @@ function filterFunction() {
         }
     }
 }
-
