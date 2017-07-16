@@ -15,11 +15,17 @@ Clone or download the repo and open index.html in the browser
 - Creaed dropdown list
 - infowindow
 
+###Description nformation from:
+- Foursquare
+- Wiki
+- Parks website
 
 ### References:
 - http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
 - http://knockoutjs.com/documentation/plugins-mapping.html
+- https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 - https://faulknercs.github.io/Knockstrap
 - W3School
 - udacity.com
+- github
 

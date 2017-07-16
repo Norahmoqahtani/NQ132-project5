@@ -41,11 +41,10 @@ var locations =[ {
         lat: 24.62105,
         lng: 46.77263
     },
-    description: 'It was built in 1936/37 by King Abdul Aziz'
+    description: 'It was built in 1936 by King Abdul Aziz'
 }];
 var infoWindow;
 var markers =[];
-var marker;
 var map;
 
 //initMap
@@ -60,7 +59,7 @@ var InitMap = function () {
     });
     
     infowindow = new google.maps.InfoWindow();
-    
+    var clickInfowindow = new google.maps.InfoWindow();
     //Source:knockoutjs
     //view model
     var ViewModel = function () {
@@ -91,6 +90,7 @@ var InitMap = function () {
             
             var marker = new google.maps.Marker({
                 map: map,
+                title: name,
                 position: placeLoc.position(),
                 animation: google.maps.Animation.DROP
             });
@@ -101,6 +101,7 @@ var InitMap = function () {
             //check for opened windows
             if (infowindow.marker !== marker) {
                 infowindow.marker = marker;
+                
                 marker.addListener('click', function () {
                     infoWindow.marker = marker;
                     this.setAnimation(google.maps.Animation.BOUNCE);
@@ -110,22 +111,21 @@ var InitMap = function () {
                     },
                     700);
                     
+                    openInfoWindow(this, clickInfowindow);
+                    
+                    //add infoWindow setContent to open it when click the marker
+                    infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
+                    '<h4>' + placeLoc.description() + '</h4>');
                     infoWindow.open(map, marker);
-                    /*added to close infow*/
                     infoWindow.addListener('closeclick', function () {
                         infowindow.marker = null;
                     });
-                    
-                    // infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
-                    //  '<h4>' + placeLoc.description() + '</h4>');
-                    
                     // infoWindow.setContent(content);
                 });
             }
         });
         
-        //filter/search locations
-        
+        //filter/search locations       
         self.locationsArray = ko.computed(function () {
             var search = self.searchList().toLowerCase();
             if (! search) {
@@ -148,7 +148,6 @@ var InitMap = function () {
                         placeLoc.marker.setVisible(false);
                         return false;
                     }
-                    // return self.filteredlist();
                 },
                 self);
             }
@@ -163,52 +162,6 @@ var InitMap = function () {
     //To apply bindings
     ko.applyBindings(new ViewModel());
 };
-
-
-//FourSquare API
-/*  */
-var fourSquareApiUrl = "https://api.foursquare.com/v2/venues/search"
-var client_id = 'K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC',
-client_secret = '3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO'
-
-$.ajax({
-    url: fourSquareApiUrl,
-    dataType: "json",
-    async: true,
-    data: {
-        ll: '24.774265, 46.738586',
-        client_id: client_id,
-        client_secret: client_secret,
-        v: '20170619'
-    },
-    
-    success: function (response) {
-        
-        var title = response.response.title;
-        var description = response.response.description ? response.response.description: " ";
-        
-        //click marker to show infowindow
-        var info = new google.maps.InfoWindow();
-        for (i = 0; i < locations.length; i++) {
-            
-            var marker = new google.maps.Marker({
-                position: position,
-                map: map,
-                title: title
-            });
-            console.log(response.response);
-            
-            google.maps.event.addListener(marker, 'click', function (placeLoc) {
-                
-                infowindow.setContent('<div>' + placeLoc.title + '</div><div>' + placeLoc.description + '</div>');
-                infowindow.open(map, marker);
-            });
-        }
-    }
-}).fail(function (e) {
-    infowindow.setContent('Foursquare data is unavailable. Please try again later.');
-    self.showMessage(true);
-});
 
 //Google Map Error
 function googleError() {
@@ -232,5 +185,39 @@ function filterFunction() {
         } else {
             a[i].style.display = "none";
         }
+    }
+}
+
+//Foursquare API
+function openInfoWindow(marker, infowindow) {
+    if (infowindow.marker != marker) {    
+        var client_id = 'K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC',
+        client_secret = '3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO',
+        position,
+        venue;
+        
+        $.ajax({
+            url: 'https://api.foursquare.com/v2/venues/search',
+            dataType: 'json',
+            async: true,
+            data: {
+                ll: '24.774265, 46.738586',
+                query: marker.title,
+                client_id: client_id,
+                client_secret: client_secret,
+                v: '20170619'
+            }
+        }).done(function (data) {
+            console.log(data);
+                       
+            var venue = data.response.venue.name;
+            address = data.response.venue.location.address ? data.response.venue.location.address: " ";
+                                      
+                infowindow.setContent('<div>' + marker.title + '</div><p>' + data.response.venues[0].location.address + '</p>');
+                        
+        }).fail(function (e) {
+            infowindow.setContent('Foursquare data is unavailable. Please try again later.');
+            self.showMessage(true);
+        });
     }
 }
