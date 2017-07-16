@@ -85,7 +85,6 @@ var InitMap = function () {
         
         // to knockout
         //Source: http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
-        
         this.filteredlist().forEach(function (placeLoc) {
             
             var marker = new google.maps.Marker({
@@ -125,7 +124,7 @@ var InitMap = function () {
             }
         });
         
-        //filter/search locations       
+        //filter/search locations
         self.locationsArray = ko.computed(function () {
             var search = self.searchList().toLowerCase();
             if (! search) {
@@ -190,7 +189,7 @@ function filterFunction() {
 
 //Foursquare API
 function openInfoWindow(marker, infowindow) {
-    if (infowindow.marker != marker) {    
+    if (infowindow.marker != marker) {
         var client_id = 'K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC',
         client_secret = '3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO',
         position,
@@ -209,12 +208,11 @@ function openInfoWindow(marker, infowindow) {
             }
         }).done(function (data) {
             console.log(data);
-                       
+            
             var venue = data.response.venue.name;
             address = data.response.venue.location.address ? data.response.venue.location.address: " ";
-                                      
-                infowindow.setContent('<div>' + marker.title + '</div><p>' + data.response.venues[0].location.address + '</p>');
-                        
+            
+            infowindow.setContent('<div>' + marker.title + '</div><p>' + data.response.venues[0].location.address + '</p>');
         }).fail(function (e) {
             infowindow.setContent('Foursquare data is unavailable. Please try again later.');
             self.showMessage(true);
