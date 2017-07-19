@@ -37,6 +37,7 @@ var locations =[ {
         lng: 41.4327
     }
 }];
+
 var infoWindow;
 var markers =[];
 var map;
