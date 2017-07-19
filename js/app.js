@@ -1,47 +1,41 @@
 
 //Locations
 var locations =[ {
-    title: 'King Salman Safari Park',
+    title: '‪King Abdullah Environmental Park',
     position: {
-        lat: 25.0054,
-        lng: 46.6020
-    },
-    description: ' The park resembles the Najd region, giving it a natural beauty'
+        lat: 25.3201,
+        lng: 49.5566
+    }
 }, {
     title: ' King Abdullah Park',
     position: {
         lat: 24.6660,
         lng: 46.7376
-    },
-    description: ' The park was established by Prince Turki Bin Abdul Aziz.'
+    }
 }, {
     title: ' Salam Park',
     position: {
         lat: 24.6213,
         lng: 46.7083
-    },
-    description: 'Salam Park represents one of the natural elements for Riyadh '
+    }
 }, {
-    title: ' Riyadh National Zoo Park',
+    title: ' Dhahran Hills Park',
     position: {
-        lat: 24.7117,
-        lng: 46.7242
-    },
-    description: ' is an easily accessible travel location for visiting the city'
+        lat: 26.2982,
+        lng: 50.1072
+    }
 }, {
-    title: 'Rawdah Park',
+    title: ' Al Rudaf Park',
     position: {
-        lat: 24.7317,
-        lng: 46.7756
-    },
-    description: ' Open Park for Kids to do cycling, play in the sand, Skate'
+        lat: 21.23263,
+        lng: 40.42302
+    }
 }, {
-    title: ' King Abdul Aziz Historical Centre',
+    title: 'Raghadan Forest Park',
     position: {
-        lat: 24.62105,
-        lng: 46.77263
-    },
-    description: 'It was built in 1936 by King Abdul Aziz'
+        lat: 20.0207,
+        lng: 41.4327
+    }
 }];
 var infoWindow;
 var markers =[];
@@ -51,10 +45,10 @@ var map;
 var InitMap = function () {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
-            lat: 24.774265,
-            lng: 46.738586
+            lat: 23.8859,
+            lng: 45.0792
         },
-        zoom: 10,
+        zoom: 6,
         mapTypeId: 'roadmap'
     });
     
@@ -75,7 +69,6 @@ var InitMap = function () {
         var placeLoc = function (data) {
             var self = this;
             this.title = ko.observable(data.title);
-            this.description = ko.observable(data.description);
             this.position = ko.observable(data.position);
             this.showlist = ko.observable(true);
         };
@@ -97,34 +90,20 @@ var InitMap = function () {
             //create infowindow
             placeLoc.marker = marker;
             infoWindow = new google.maps.InfoWindow();
-            //check for opened windows
-            if (infowindow.marker !== marker) {
-                infowindow.marker = marker;
-                
-                marker.addListener('click', function () {
-                    infoWindow.marker = marker;
-                    this.setAnimation(google.maps.Animation.BOUNCE);
-                    /* added setTimeOut */
-                    setTimeout(function () {
-                        marker.setAnimation(null);
-                    },
-                    700);
-                    
-                    openInfoWindow(this, clickInfowindow);
-                    
-                    //add infoWindow setContent to open it when click the marker
-                    infoWindow.setContent('<h2>' + placeLoc.title() + '</h2>' +
-                    '<h4>' + placeLoc.description() + '</h4>');
-                    infoWindow.open(map, marker);
-                    infoWindow.addListener('closeclick', function () {
-                        infowindow.marker = null;
-                    });
-                    // infoWindow.setContent(content);
-                });
-            }
+            //Create an onclick event to open infowindow for each marker
+            marker.addListener('click', function () {
+                infoWindow.marker = marker;
+                this.setAnimation(google.maps.Animation.BOUNCE);
+                /* added setTimeOut */
+                setTimeout(function () {
+                    marker.setAnimation(null);
+                },
+                700);
+                openInfoWindow(this, clickInfowindow);
+            });
         });
         
-        //filter/search locations
+        //Filter/Search locations
         self.locationsArray = ko.computed(function () {
             var search = self.searchList().toLowerCase();
             if (! search) {
@@ -167,7 +146,7 @@ function googleError() {
     window.alert("I'm sorry there has been an error with Google Maps.");
 }
 
-//dropdown list
+//Dropdown list
 function myFunction() {
     document.getElementById("myDropdown").classList.toggle("showlist");
 }
@@ -187,33 +166,38 @@ function filterFunction() {
     }
 }
 
-//Foursquare API
+// Foursquare API
 function openInfoWindow(marker, infowindow) {
+    console.log(marker);
     if (infowindow.marker != marker) {
+        infowindow.open(map, marker);
+        
         var client_id = 'K4RE0VHCBPDS3TXGJDAC25ZNWWGLO3FNBYJBFXI5LY0X1GDC',
         client_secret = '3R3KD0ICDOEINKPS05RVCA2R0EY5G0ZWAYYJEDFJXY0FPUDO',
-        position,
+        location,
         venue;
         
         $.ajax({
             url: 'https://api.foursquare.com/v2/venues/search',
             dataType: 'json',
-            async: true,
             data: {
-                ll: '24.774265, 46.738586',
+                ll: marker.position.lat() + ',' + marker.position.lng(),
                 query: marker.title,
                 client_id: client_id,
                 client_secret: client_secret,
                 v: '20170619'
             }
         }).done(function (data) {
-            console.log(data);
             
-            var venue = data.response.venue.name;
-            address = data.response.venue.location.address ? data.response.venue.location.address: " ";
+            var marker = data.response.venues[0];
+            infowindow.setContent('<div><h3>' + marker.name + '</h3>' +
+            marker.location.address + '</div>');
+            infowindow.marker = marker;
             
-            infowindow.setContent('<div>' + marker.title + '</div><p>' + data.response.venues[0].location.address + '</p>');
-        }).fail(function (e) {
+            infowindow.addListener('closeclick', function () {
+                infowindow.marker = null;
+            });
+        }).fail(function (error) {
             infowindow.setContent('Foursquare data is unavailable. Please try again later.');
             self.showMessage(true);
         });
