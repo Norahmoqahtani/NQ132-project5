@@ -8,7 +8,6 @@ Develop a single page application featuring a map of your neighborhood or a neig
 
 Clone or download the repo and open index.html in the browser 
 
-
 #### Steps of project
 
 - Added at lease 5 locatons
