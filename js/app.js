@@ -1,4 +1,4 @@
-
+﻿
 //Locations
 var locations =[ {
     title: '‪King Abdullah Environmental Park',
