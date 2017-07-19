@@ -1,12 +1,7 @@
 
 //Locations
-var locations =[ {
-    title: '‪King Abdullah Environmental Park',
-    position: {
-        lat: 25.3201,
-        lng: 49.5566
-    }
-}, {
+var locations =[ 
+{
     title: ' King Abdullah Park',
     position: {
         lat: 24.6660,
