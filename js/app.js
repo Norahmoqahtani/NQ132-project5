@@ -192,6 +192,7 @@ function openInfoWindow(marker, infowindow) {
             var marker = data.response.venues[0];
             infowindow.setContent('<div><h3>' + marker.name + '</h3>' +
             marker.location.address + '</div>');
+            
             infowindow.marker = marker;
             
             infowindow.addListener('closeclick', function () {
