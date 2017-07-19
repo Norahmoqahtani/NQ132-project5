@@ -1,7 +1,6 @@
 
 //Locations
-var locations =[ 
-{
+var locations =[ {
     title: ' King Abdullah Park',
     position: {
         lat: 24.6660,
@@ -26,10 +25,10 @@ var locations =[
         lng: 40.42302
     }
 }, {
-    title: 'Raghadan Forest Park',
+    title: 'Al-Shallal Theme Park',
     position: {
-        lat: 20.0207,
-        lng: 41.4327
+        lat: 21.5679,
+        lng: 39.1110
     }
 }];
 
